@@ -1,0 +1,267 @@
+<mujoco model="nimbro_new">
+  <compiler angle="radian" meshdir="../../mesh/nimbro_new" inertiafromgeom="false"/>
+  
+  <option timestep="0.001" iterations="50" solver="Newton" jacobian="dense" cone="elliptic" tolerance="1e-8" gravity='0 0 -9.81' impratio="1" noslip_iterations="0" >
+      <flag sensornoise="enable" />
+  </option>
+  
+  <size njmax="-1" nconmax="-1"  nstack="-1" nuser_sensor="1" />
+  
+  <visual>
+    <map force="0.01"/>
+    <scale connect="0.1" jointlength="2" jointwidth="0.1" />
+  </visual>
+  
+  <default>
+    <default class="visual">
+      <geom condim="1" contype="0" conaffinity="0" rgba="0.6 0.6 0.6 1.0"/>
+    </default>
+    
+    <default class='collision'>
+      <geom condim="1" contype="1" conaffinity="1" rgba="0.1 0.8 0.1 0.0"/>
+    </default>
+    
+    <!--joint limited="true" armature="2.17e-7" damping="9.9e-3" frictionloss="0.1" /-->
+    <!--joint limited="true" armature="0.1" damping="0.04" frictionloss="0.12" /-->
+     <joint limited="true" armature="0.1" damping="2.5" frictionloss="0.32" />
+    
+    <motor ctrllimited="true" ctrlrange="0 0"/>
+  </default>
+  
+  <contact>
+      <!-- Parallel Kinematics -->
+      <exclude body1="parallel_right_parallel_rod_link" body2="parallel_right_knee_main_link" />
+      <exclude body1="parallel_right_thigh_main_link" body2="right_hip_yaw_link" />
+      <exclude body1="parallel_right_parallel_rod_link" body2="parallel_right_ankle_link" />
+      <exclude body1="parallel_left_parallel_rod_link" body2="parallel_left_knee_main_link" />
+      <exclude body1="parallel_left_thigh_main_link" body2="left_hip_yaw_link" />
+      <exclude body1="parallel_left_parallel_rod_link" body2="parallel_left_ankle_link" />
+      
+      <!-- Imposed by limits -->
+      <exclude body1="parallel_right_thigh_main_link" body2="parallel_right_shank_main_link" />
+      <exclude body1="parallel_left_thigh_main_link" body2="parallel_left_shank_main_link" />
+  </contact>
+  
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.4 0.6 0.8" rgb2="0 0 0" width="800" height="800" mark="random" markrgb="1 1 1"/> 
+    <!--texture type="skybox" builtin="gradient" rgb1="1.0 1.0 1.0" rgb2="1.0 1.0 1.0" width="800" height="800" mark="random" markrgb="1 1 1"/--> 
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>  
+    
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+      
+    <mesh name="trunk_link" file="trunk_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="left_hip_yaw_link" file="left_hip_yaw_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="right_hip_yaw_link" file="left_hip_yaw_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="right_hip_link" file="left_hip_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="right_ankle_link" file="left_ankle_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="left_hip_link" file="left_hip_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="left_ankle_link" file="left_ankle_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="right_shoulder_link" file="left_shoulder_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="left_shoulder_link" file="left_shoulder_link.STL" scale="1.0 1.0 1.0"/>
+    
+    <mesh name="left_thigh_link" file="left_thigh_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="right_thigh_link" file="left_thigh_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="parallel_rod_link" file="parallel_rod_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="left_knee_link" file="left_knee_link.STL" scale="1.0 1.0 1.0"/>
+    <mesh name="right_knee_link" file="left_knee_link.STL" scale="1.0 -1.0 1.0"/>
+    <mesh name="shank_main_link" file="left_shank_link.STL" scale="1.0 1.0 1.0"/>
+  </asset>
+  
+  <worldbody>
+      <geom name="floor" pos="0 0 0" size="0 0 .25" type="plane" material="matplane" solimp=".99 .995 .001 0.5 2" solref="-10000.0 -200.0" condim="4" priority="1" friction="0.7 0.1 0.1" /> <!--solref="-10000.0 -200.0" friction="0.7 0.1 0.1"-->
+    
+    <!--geom name="floor" pos="0 0 0" size="10 10 .25" type="plane" material="matplane" solimp=".99 .995 .001 0.5 2" solref="-500.0 -150.0" condim="4" priority="1" friction="1.0 0.1 0.1" /-->
+    <!--default -->
+    <!--geom name="floor" pos="0 0 0" size="10 10 .25" type="plane" material="matplane" solimp=".99 .995 .001 0.5 2" solref="-10000.0 -1000.0" condim="4" priority="1" friction="0.7 0.1 0.1" /-->
+    
+    <light directional="false" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 50" dir="0 0 -1" castshadow="false"/>
+    <light mode="targetbodycom" target="trunk_link" directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1"/>
+    <!--light directional="true" diffuse=".9 .9 .9" specular=".9 .9 .9" pos="0 0 5" dir="0 0 -1" castshadow="false"/-->
+    
+    <camera name="lateral_cam" mode="trackcom" pos="0 -2.2 0.8" euler="1.570796  0 0" />
+    <camera name="front_cam" mode="trackcom" pos="2.4 0.0 0.8" euler="1.570796 1.570796 0" />
+    
+    <body name="trunk_link" pos="0 0 0.77">
+      <freejoint name="root"/>
+      <inertial pos="-0.02658535 0 0.14500787" mass="5.20047716" fullinertia="0.07326504 0.07407370 0.02367380 0.0 0.0 0.0" />
+      <!--geom type="box" class="collision" size="0.105326 0.157184 0.161915" pos="0.008581 0.000784 0.164845" /-->
+      <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="trunk_link" />
+      <geom type="mesh" class="collision" mesh="trunk_link" />
+      <site name="imu_vis"  type="box" rgba="0.8 0.8 0.8 1" pos="0 0.0 0.16" size="0.05 0.05 0.01"/>
+      <site name="imu"  pos="0 -0.08 0.16" /> <!-- 0 0 0.25 was diegos original value, in the robot its closer to 0 -0.08 0.16-->
+      <body name="right_hip_yaw_link" pos="0 -0.051355805 -0.01071788" euler="-0.261799388 0 0">
+        <inertial pos="0 0.00724195 -0.02181654" mass="0.08195131" fullinertia="0.00005602 0.00011377 0.00010391 0.00000000 -0.00000001 0.00000334" />
+        <joint name="right_hip_yaw" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159" />
+<!--         <geom type="cylinder" class="collision" size="0.07 0.080933" pos="0.000689 0 -0.025456" quat="0.707107 0 0.707107 0" /> -->
+        <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="right_hip_yaw_link" />
+        <body name="right_hip_roll_link" pos="0 0 -0.057408771126">
+          <inertial pos="0.00076574 -0.05251558 0.00065619" mass="1.43634161" fullinertia="0.00462564 0.00094964 0.00464908 -0.00008808 -0.00001887 0.00002958" />
+          <joint name="right_hip_roll" pos="0 0 0" axis="1 0 0" range="-0.9891108 0.610865238" />
+<!--           <geom type="cylinder" class="collision" size="0.05134 0.068736" pos="-0.000446273 -5.84706e-06 -0.0311432" quat="0.707107 0 0.707107 0" /> -->
+          <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="right_hip_link" />
+          <body name="parallel_right_thigh_main_link" pos="-0.00255 -0.1014 0">
+            <inertial pos="0.01970977 0.00209924 -0.12743050" mass="0.45418350" fullinertia="0.00608556 0.00585037 0.00141334 -0.00000866 0.00001934 -i0.00010098" />
+            <joint name="parallel_right_thigh_pitch" pos="0 0 0" axis="0 1 0" range="-1.570796 0.756252" />
+            <!--geom type="box" class="collision" size="0.065267 0.0665915 0.147702" pos="-0.030297 0 -0.130271" /-->
+            <geom type="mesh" class="collision" mesh="right_thigh_link" />
+            <geom type="mesh" class="visual" mesh="right_thigh_link" />
+            <body name="parallel_right_knee_main_link" pos="0 0 -0.27">
+              <inertial pos="0.00317201 -0.00204530 -0.00042268" mass="0.74963273" fullinertia="0.00050361 0.00054772 0.00052882 0.00000341 -0.00000141 -0.00000284" />
+              <joint name="parallel_right_thigh_pitch_mimic1" pos="0 0 0" axis="0 1 0" range="-0.756252 1.570796"/>
+              <geom type="mesh" class="visual" mesh="right_knee_link" />
+              <body name="parallel_right_shank_main_link" pos="0 0 0">
+                <inertial pos="0.01748220 0.00011553 -0.10458745" mass="0.31908091" fullinertia="0.00321630 0.00296736 0.00064089 -0.00000043 -0.00009814 -0.00000589" />
+                <geom type="mesh" class="visual" mesh="shank_main_link" />
+                <joint name="parallel_right_shank_pitch" pos="0 0 0" axis="0 1 0" range="-0.756252 1.503301" />
+                <!--geom type="box" class="collision" size="0.0648105 0.066756 0.192819" pos="-0.034576 0 -0.125826" /-->
+                <geom type="mesh" class="collision" mesh="shank_main_link" />
+                <body name="parallel_right_ankle_link" pos="0 0 -0.27">
+                  <inertial pos="0.02809098 -0.00090749 -0.06129945" mass="0.27529515" fullinertia="0.00020315 0.00050134 0.00049365 0.00000109 0.00008239 0.00001126" />
+                  <joint name="parallel_right_shank_pitch_mimic1" pos="0 0 0" axis="0 1 0" range="-1.503301 0.756252"/>
+<!--                   <geom type="cylinder" class="collision" size="0.05134 0.068736" pos="0.000225 -0.000188 -0.003643" quat="0.707107 0 0.707107 0" />  -->
+                  <geom type="mesh" class="visual" mesh="right_ankle_link"/>
+                  <geom type="mesh" class="collision" mesh="right_ankle_link"/>
+                  <body name="parallel_right_foot_plane_link" pos="0.05 0 -0.05">
+                  </body>
+                </body>
+              </body>
+              <body name="parallel_right_parallel_rod_link" pos="0.03292209738 -0.0053 -0.04025090687">
+                <inertial pos="0 0 -0.135" mass="0.06362907" fullinertia="0.00076790 0.00076833 0.00000098 0.0 0.0 0.0" />
+                <joint name="parallel_right_shank_pitch_mimic2" pos="0 0 0" axis="0 1 0" range="-0.756252 1.503301" />
+                <geom type="mesh" class="visual" mesh="parallel_rod_link" />
+              </body>
+            </body>
+          </body>
+          <body name="parallel_right_parallel_rod_link1" pos="0.04536410068 -0.0616 0.0210261354">
+            <inertial pos="0 0 -0.135" mass="0.06362907" fullinertia="0.00076790 0.00076833 0.00000098 0.0 0.0 0.0" />
+            <joint name="parallel_right_thigh_pitch_mimic2" pos="0 0 0" axis="0 1 0" range="-1.570796 0.756252" />
+            <geom type="mesh" class="visual" mesh="parallel_rod_link" />
+          </body>
+        </body>
+      </body>
+      <body name="left_hip_yaw_link" pos="0 0.051355805 -0.01071788" euler="0.261799388 0 0">
+        <inertial pos="0 -0.00724195 -0.02181654" mass="0.08195131" fullinertia="0.00005602 0.00011377 0.00010391 0.00000000 -0.00000001 0.00000334" />
+        <joint name="left_hip_yaw" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159" />
+<!--         <geom type="cylinder" class="collision" size="0.07 0.080933" pos="0.000689 0 -0.025456" quat="0.707107 0 0.707107 0" /> -->
+        <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="left_hip_yaw_link" />
+        <body name="left_hip_roll_link" pos="0 0 -0.057408771126">
+          <inertial pos="0.00076574 0.05251558 0.00065619" mass="1.43634161" fullinertia="0.00462564 0.00094964 0.00464908 0.00008808 -0.00001887 -0.00002958" /> 
+          <joint name="left_hip_roll" pos="0 0 0" axis="1 0 0" range="-0.610865238 0.9891108" />
+<!--           <geom type="cylinder" class="collision" size="0.05134 0.068736" pos="-0.000446273 -5.84706e-06 -0.0311432" quat="0.707107 0 0.707107 0" /> -->
+          <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="left_hip_link" />
+          <body name="parallel_left_thigh_main_link" pos="-0.00255 0.1014 0 ">
+            <inertial pos="0.01970977 -0.00209924 -0.12743050" mass="0.45418350" fullinertia="0.00608556 0.00585037 0.00141334 0.00000866 0.00001934 0.00010098" />
+            <joint name="parallel_left_thigh_pitch" pos="0 0 0" axis="0 1 0" range="-1.570796 0.756252" />
+            <!--geom type="box" class="collision" size="0.065267 0.0665915 0.147702" pos="-0.030297 0 -0.130271" /-->
+            <geom type="mesh" class="collision" mesh="left_thigh_link" />
+            <geom type="mesh" class="visual" mesh="left_thigh_link" />
+            <body name="parallel_left_knee_main_link" pos="0 0 -0.27">
+              <inertial pos="0.00317201 0.00204530 -0.00042268" mass="0.74963273" fullinertia="0.00050361 0.00054772 0.00052882 0.00000341 -0.00000141 -0.00000284" />
+              <joint name="parallel_left_thigh_pitch_mimic1" pos="0 0 0" axis="0 1 0" range="-0.756252 1.570796"/>
+              <geom type="mesh" class="visual" mesh="left_knee_link" />
+              <body name="parallel_left_shank_main_link" pos="0 0 0">
+                <inertial pos="0.01748220 -0.00011553 -0.10458745" mass="0.31908091" fullinertia="0.00321630 0.00296736 0.00064089 -0.00000043 -0.00009814 -0.00000589" />
+                <joint name="parallel_left_shank_pitch" pos="0 0 0" axis="0 1 0" range="-0.756252 1.503301" />
+                <!--geom type="box" class="collision" size="0.0648105 0.066756 0.192819" pos="-0.034576 0 -0.125826" /-->
+                <geom type="mesh" class="collision" mesh="shank_main_link" />
+                <geom type="mesh" class="visual" mesh="shank_main_link" />
+                <body name="parallel_left_ankle_link" pos="0 0 -0.27">
+                  <inertial pos="0.02809098 0.00090749 -0.06129945" mass="0.27529515" fullinertia="0.00020316 0.00050134 0.00049366 -0.00000124 0.00008239 -0.00001107" />
+                  <joint name="parallel_left_shank_pitch_mimic1" pos="0 0 0" axis="0 1 0" range="-1.503301 0.756252" />
+                  <geom type="mesh" class="visual" mesh="left_ankle_link"/>
+                  <geom type="mesh" class="collision" mesh="left_ankle_link"/>
+                  <body name="parallel_left_foot_plane_link" pos="0.05 0 -0.05">
+                  </body>
+                </body>
+              </body>
+              <body name="parallel_left_parallel_rod_link" pos="0.03292209738 0.0053 -0.04025090687">
+                <inertial pos="0 0 -0.135" mass="0.06362907" fullinertia="0.00076790 0.00076833 0.00000098 0.0 0.0 0.0" />
+                <joint name="parallel_left_shank_pitch_mimic2" pos="0 0 0" axis="0 1 0" range="-0.756252 1.503301" />
+                <geom type="mesh" class="visual" mesh="parallel_rod_link" />
+              </body>
+            </body>
+          </body>
+          <body name="parallel_left_parallel_rod_link1" pos="0.04536410068 0.0616 0.0210261354">
+            <inertial pos="0 0 -0.135" mass="0.06362907" fullinertia="0.00076790 0.00076833 0.00000098 0.0 0.0 0.0" />
+            <joint name="parallel_left_thigh_pitch_mimic2" pos="0 0 0" axis="0 1 0" range="-1.570796 0.756252" />
+            <geom type="mesh" class="visual" mesh="parallel_rod_link" />
+          </body>
+        </body>
+      </body>
+      <body name="right_shoulder_pitch_link" pos="0 -0.09177824488 0.26148499688" euler="-0.174532925 0 0">
+        <inertial pos="0.00165563 -0.07432328 -0.13752631" mass="0.40697086" fullinertia="0.00944004 0.00877735 0.00076229 0.00000012 0.00000046 -0.00233820" />
+        <joint name="right_shoulder_pitch" pos="0 0 0" axis="0 1 0" range="-3.479068 1.983437" />
+        <geom type="mesh" class="collision" mesh="right_shoulder_link" />
+<!--         <geom type="cylinder" class="collision" size="0.049632 0.0409295" pos="-0.000337 -0.041156 -0.001443" quat="0.707107 -0.707107 0 0" /> -->
+        <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="right_shoulder_link" />
+      </body>
+      <body name="left_shoulder_pitch_link" pos="0 0.09177824488 0.26148499688" euler="0.174532925 0 0">
+        <inertial pos="0.00165563 0.07432328 -0.13752631" mass="0.40697086" fullinertia="0.00943885 0.00877735 0.00076348 -0.00002743 0.00010178 0.00233804" />
+        <joint name="left_shoulder_pitch" pos="0 0 0" axis="0 1 0" range="-3.479068 1.983437" />
+        <geom type="mesh" class="collision" mesh="left_shoulder_link" />
+<!--         <geom type="cylinder" class="collision" size="0.049632 0.0409295" pos="0.000337 0.041156 -0.001443" quat="0.707107 0.707107 0 0" /> -->
+        <geom type="mesh" class="visual" rgba="0.8 0.8 0.8 1" mesh="left_shoulder_link" />
+      </body>
+    </body>
+  </worldbody>
+  <!-- foot is 135 by 85mm -->
+  <!--fullinertia="0.00020315 0.00050134 0.00049365 0.00000109 0.00008239 0.00001126" right
+  fullinertia="0.00020316 0.00050134 0.00049366 -0.00000124 0.00008239 -0.00001107" left. only thing that changed were signs on XY and YZ -->
+  <!-- Equalities for parallel kineamtics -->
+  <equality>
+    <connect body1="parallel_right_parallel_rod_link1" body2="parallel_right_knee_main_link" anchor="0 0 -0.27" solref="0.001 1" />
+    <connect body1="parallel_right_parallel_rod_link" body2="parallel_right_ankle_link" anchor="0 0 -0.27" solref="0.001 1" />
+    <connect body1="parallel_left_parallel_rod_link1" body2="parallel_left_knee_main_link" anchor="0 0 -0.27" solref="0.001 1" />
+    <connect body1="parallel_left_parallel_rod_link" body2="parallel_left_ankle_link" anchor="0 0 -0.27" solref="0.001 1" />
+  </equality>
+  
+  <actuator>
+      <motor name="right_hip_yaw"               joint="right_hip_yaw"               gear="1"   ctrlrange='-20 20' />
+      <motor name="right_hip_roll"              joint="right_hip_roll"              gear="1"    ctrlrange='-26 26' />
+      <motor name="parallel_right_thigh_pitch"  joint="parallel_right_thigh_pitch"  gear="1"        ctrlrange='-52 52' /> <!--forcelimited="false" forcerange="-52 52" /> -->
+      <motor name="parallel_right_shank_pitch"  joint="parallel_right_shank_pitch"  gear="1"        ctrlrange='-52 52' /> <!--forcelimited="false" forcerange="-52 52" /> -->
+      <motor name="left_hip_yaw"                joint="left_hip_yaw"                gear="1"   ctrlrange='-20 20' />
+      <motor name="left_hip_roll"               joint="left_hip_roll"               gear="1"    ctrlrange='-26 26' />
+      <motor name="parallel_left_thigh_pitch"   joint="parallel_left_thigh_pitch"   gear="1"        ctrlrange='-52 52' /> <!--forcelimited="false" forcerange="-52 52" /> -->
+      <motor name="parallel_left_shank_pitch"   joint="parallel_left_shank_pitch"   gear="1"        ctrlrange='-52 52' /> <!--forcelimited="false" forcerange="-52 52" /> -->
+      <motor name="right_shoulder_pitch"        joint="right_shoulder_pitch"        gear="1"        ctrlrange='-13 13' />        
+      <motor name="left_shoulder_pitch"         joint="left_shoulder_pitch"         gear="1"        ctrlrange='-13 13' />        
+  </actuator>
+  
+  <sensor>
+      <accelerometer name="accelerometer" site="imu" noise="2.0e-1" cutoff="18.0"/> 
+      <gyro name="gyro" site="imu"  noise="5.0e-2" cutoff="18.0"/> 
+      
+      <!-- necessary sensors for getting linear and angular accelerations for ZMP and CMP-->
+      
+      <subtreelinvel name="subtreelinvel" body="trunk_link" /> 
+      <subtreeangmom name="subtreeangmom" body="trunk_link" />
+      
+      <!-- Encoders -->
+      <jointpos name="right_hip_yaw"               joint="right_hip_yaw"               noise="1e-4"   user="0.00153398078" />
+      <jointpos name="right_hip_roll"              joint="right_hip_roll"              noise="1e-4"   user="0.00153398078" />
+      <jointpos name="parallel_right_thigh_pitch"  joint="parallel_right_thigh_pitch"  noise="1e-4"   user="0.00153398078" />
+      <jointpos name="parallel_right_shank_pitch"  joint="parallel_right_shank_pitch"  noise="1e-4"   user="0.00153398078" />
+      <jointpos name="left_hip_yaw"                joint="left_hip_yaw"                noise="1e-4"   user="0.00153398078" />
+      <jointpos name="left_hip_roll"               joint="left_hip_roll"               noise="1e-4"   user="0.00153398078" />
+      <jointpos name="parallel_left_thigh_pitch"   joint="parallel_left_thigh_pitch"   noise="1e-4"   user="0.00153398078" />
+      <jointpos name="parallel_left_shank_pitch"   joint="parallel_left_shank_pitch"   noise="1e-4"   user="0.00153398078" />
+      <jointpos name="right_shoulder_pitch"        joint="right_shoulder_pitch"        noise="1e-4"   user="0.00153398078" />        
+      <jointpos name="left_shoulder_pitch"         joint="left_shoulder_pitch"         noise="1e-4"   user="0.00153398078" />        
+     
+      
+      <!-- Joint velocity -->
+      <jointvel name="vel_right_hip_yaw"               joint="right_hip_yaw"               noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_right_hip_roll"              joint="right_hip_roll"              noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_parallel_right_thigh_pitch"  joint="parallel_right_thigh_pitch"  noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_parallel_right_shank_pitch"  joint="parallel_right_shank_pitch"  noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_left_hip_yaw"                joint="left_hip_yaw"                noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_left_hip_roll"               joint="left_hip_roll"               noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_parallel_left_thigh_pitch"   joint="parallel_left_thigh_pitch"   noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_parallel_left_shank_pitch"   joint="parallel_left_shank_pitch"   noise="1e-3"   user="0.023980824" />
+      <jointvel name="vel_right_shoulder_pitch"        joint="right_shoulder_pitch"        noise="1e-3"   user="0.023980824" />           
+      <jointvel name="vel_left_shoulder_pitch"         joint="left_shoulder_pitch"         noise="1e-3"   user="0.023980824" />        
+
+
+  </sensor>
+</mujoco>
